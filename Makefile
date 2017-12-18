@@ -1,12 +1,14 @@
 all: fraternal
 
 GCC = /usr/bin/gcc
-COMPILER_FILES = 
+COMPILER_FILES = scanner.c parser.tab.c 
+PRODUCTION_FILES = $(COMPILER_FILES) main.c
+DEBUG_FILES = $(COMPILER_FILES) main_debug.c
 
-fraternal: scanner.c parser.tab.c $(COMPILER_FILES)
+fraternal: $(PRODUCTION_FILES)
 	$(GCC) -Wall -Wno-unused-label $^ -o $@
 
-debug: scanner.c parser.tab.c $(COMPILER_FILES)
+debug: $(DEBUG_FILES)
 	$(GCC) -Wall -Wno-unused-label -g $^ -o fraternal_$@
 
 scanner.c: scanner.flex

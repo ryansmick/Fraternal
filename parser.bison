@@ -17,6 +17,7 @@ for use by scanner.c.
 %token TOKEN_PRINT
 %token TOKEN_RETURN
 %token TOKEN_STRING
+%token TOKEN_NULLABLE_STRING
 %token TOKEN_TRUE
 %token TOKEN_VOID
 %token TOKEN_WHILE
@@ -33,6 +34,7 @@ for use by scanner.c.
 %token TOKEN_PLUS
 %token TOKEN_MINUS
 %token TOKEN_NOT
+%token TOKEN_BITWISE_NOT
 %token TOKEN_XOR
 %token TOKEN_MULT
 %token TOKEN_DIVIDE
@@ -42,11 +44,13 @@ for use by scanner.c.
 %token TOKEN_ASSIGN
 %token TOKEN_AND
 %token TOKEN_OR
+%token TOKEN_BITWISE_AND
+%token TOKEN_BITWISE_OR
 %token TOKEN_COLON
 %token TOKEN_SEMICOLON
 %token TOKEN_COMMA
-%token TOKEN_INCREMENT
-%token TOKEN_DECREMENT
+%token TOKEN_PLUS_EQUAL
+%token TOKEN_MINUS_EQUAL
 %token TOKEN_EQUAL
 %token TOKEN_GE
 %token TOKEN_LE
@@ -130,6 +134,8 @@ assignee	: assignee TOKEN_LEFT_BRACKET expr TOKEN_RIGHT_BRACKET
 		;
 
 expr	: assignee TOKEN_ASSIGN expr
+	| assignee TOKEN_PLUS_EQUAL expr
+	| assignee TOKEN_MINUS_EQUAL expr
 	| expr2
 	;
 
@@ -170,9 +176,7 @@ expr8	: TOKEN_MINUS expr9
 	| expr9
 	;
 
-expr9	: expr9 TOKEN_INCREMENT
-	| expr9 TOKEN_DECREMENT
-	| expr10
+expr9	: expr10
 	;
 
 expr10	: literal

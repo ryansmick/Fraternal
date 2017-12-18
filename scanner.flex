@@ -15,6 +15,8 @@
 
 NUMBER [0-9]
 LETTER [a-zA-Z]
+WHITESPACE [ \t\r]
+NEWLINE [\n]
 
 %%
 
@@ -31,24 +33,27 @@ if {return TOKEN_IF;}
 int {return TOKEN_INTEGER;}
 print {return TOKEN_PRINT;}
 return {return TOKEN_RETURN;}
+string\? {return TOKEN_NULLABLE_STRING;}
 string {return TOKEN_STRING;}
 true {return TOKEN_TRUE;}
 void {return TOKEN_VOID;}
 while {return TOKEN_WHILE;}
 break {return TOKEN_BREAK;}
 continue {return TOKEN_CONTINUE;}
+null {return TOKEN_NULL;}
 [[] {return TOKEN_LEFT_BRACKET;}
 []] {return TOKEN_RIGHT_BRACKET;}
 [(] {return TOKEN_LEFT_PAREN;}
 [)] {return TOKEN_RIGHT_PAREN;}
 [{] {return TOKEN_LEFT_CURLY;}
 [}] {return TOKEN_RIGHT_CURLY;}
-\+\+ {return TOKEN_INCREMENT;}
+\+= {return TOKEN_PLUS_EQUAL;}
 \+ {return TOKEN_PLUS;}
--- {return TOKEN_DECREMENT;}
+-= {return TOKEN_MINUS_EQUAL;}
 - {return TOKEN_MINUS;}
 != {return TOKEN_NE;}
 ! {return TOKEN_NOT;}
+~ {return TOKEN_BITWISE_NOT;}
 \^ {return TOKEN_XOR;}
 \* {return TOKEN_MULT;}
 \/ {return TOKEN_DIVIDE;}
@@ -60,11 +65,16 @@ continue {return TOKEN_CONTINUE;}
 == {return TOKEN_EQUAL;}
 = {return TOKEN_ASSIGN;}
 && {return TOKEN_AND;}
+& {return TOKEN_BITWISE_AND;}
 \|\| {return TOKEN_OR;}
+\| {return TOKEN_BITWISE_OR;}
 : {return TOKEN_COLON;}
 ; {return TOKEN_SEMICOLON;}
 , {return TOKEN_COMMA;}
-[ \n\t\r]+ /* Ignore Whitespace */
+{NEWLINE}+({WHITESPACE}*{NEWLINE})* {return TOKEN_NEWLINE;}
+{WHITESPACE}+ /* Ignore Whitespace */
+
+ /* Identifier */
 ({LETTER}|[_])({NUMBER}|{LETTER}|[_])* {
 	if(strlen(yytext) <= 256) {
 		return TOKEN_ID;
@@ -75,6 +85,8 @@ continue {return TOKEN_CONTINUE;}
 	}
 }
 {NUMBER}+ {return TOKEN_INTEGER_LITERAL;}
+
+ /* String literal */
 ["]([^\n"]|\\.)*["] {
 	original_literal = strdup(yytext);
 	char newString[strlen(yytext)];
@@ -118,6 +130,8 @@ continue {return TOKEN_CONTINUE;}
 		exit(1);
 	}
 }
+
+ /* Character literal */
 [']([^'\\\n]|\\.)['] {
 	original_literal = strdup(yytext);
 	char newChar[2];

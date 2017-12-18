@@ -1,0 +1,9 @@
+s: string? = null
+x = 5 ^ 3
+xx = 5 & 3
+z = "hello"
+z += " world"
+
+
+
+  	 
