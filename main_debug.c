@@ -139,6 +139,12 @@ int main(int argc, char* argv[]) {
 				case TOKEN_MODULUS:
 					printf("TOKEN_MODULUS\n");
 					break;
+				case TOKEN_SHIFT_LEFT:
+					printf("TOKEN_SHIFT_LEFT\n");
+					break;
+				case TOKEN_SHIFT_RIGHT:
+					printf("TOKEN_SHIFT_RIGHT\n");
+					break;
 				case TOKEN_LT:
 					printf("TOKEN_LT\n");
 					break;

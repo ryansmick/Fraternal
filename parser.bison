@@ -39,6 +39,8 @@ for use by scanner.c.
 %token TOKEN_MULT
 %token TOKEN_DIVIDE
 %token TOKEN_MODULUS
+%token TOKEN_SHIFT_LEFT
+%token TOKEN_SHIFT_RIGHT
 %token TOKEN_LT
 %token TOKEN_GT
 %token TOKEN_ASSIGN

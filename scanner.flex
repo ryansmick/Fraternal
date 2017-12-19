@@ -58,8 +58,10 @@ null {return TOKEN_NULL;}
 \* {return TOKEN_MULT;}
 \/ {return TOKEN_DIVIDE;}
 % {return TOKEN_MODULUS;}
+\<\< {return TOKEN_SHIFT_LEFT;}
 \<= {return TOKEN_LE;}
 \< {return TOKEN_LT;}
+>> {return TOKEN_SHIFT_RIGHT;}
 >= {return TOKEN_GE;}
 > {return TOKEN_GT;}
 == {return TOKEN_EQUAL;}

@@ -1,3 +1,4 @@
 parser.output
 parser.tab.*
 scanner.c
+tests/results/*
