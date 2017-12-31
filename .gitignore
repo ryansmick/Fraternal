@@ -2,3 +2,5 @@ parser.output
 parser.tab.*
 scanner.c
 tests/results/*
+fraternal
+fraternal_debug

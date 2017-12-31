@@ -25,6 +25,7 @@ NEWLINE [\n]
 <<EOF>> {return TOKEN_EOF;}
 boolean {return TOKEN_BOOLEAN;}
 char {return TOKEN_CHAR;}
+elif {return TOKEN_ELIF;}
 else {return TOKEN_ELSE;}
 false {return TOKEN_FALSE;}
 for {return TOKEN_FOR;}

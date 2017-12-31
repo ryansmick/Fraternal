@@ -52,6 +52,9 @@ int main(int argc, char* argv[]) {
 				case TOKEN_CHAR:
 					printf("TOKEN_CHAR\n");
 					break;
+				case TOKEN_ELIF:
+					printf("TOKEN_ELIF\n");
+					break;
 				case TOKEN_ELSE:
 					printf("TOKEN_ELSE\n");
 					break;

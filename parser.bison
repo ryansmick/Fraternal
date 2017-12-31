@@ -8,6 +8,7 @@ for use by scanner.c.
 %token TOKEN_ID
 %token TOKEN_BOOLEAN
 %token TOKEN_CHAR
+%token TOKEN_ELIF
 %token TOKEN_ELSE
 %token TOKEN_FALSE
 %token TOKEN_FOR
@@ -91,61 +92,65 @@ struct decl* parser_result;
 
 /* Here is the grammar: program is the start symbol. */
 
-program : decl_list TOKEN_EOF
-	;
-
-decl_list	: decl decl_list
-		|
-		;
-
-decl	: decl2 TOKEN_SEMICOLON
-	| decl2 TOKEN_ASSIGN expr TOKEN_SEMICOLON
-	| ident TOKEN_COLON function_type TOKEN_ASSIGN TOKEN_LEFT_CURLY stmt_list TOKEN_RIGHT_CURLY
-	| ident TOKEN_COLON function_type TOKEN_SEMICOLON
-	| decl2 TOKEN_ASSIGN TOKEN_LEFT_CURLY expr_list TOKEN_RIGHT_CURLY TOKEN_SEMICOLON
-	;
-
-decl2	: ident TOKEN_COLON type
+program : stmt_list TOKEN_EOF
 	;
 
 stmt_list	: stmt stmt_list
 		|
 		;
 
-stmt	: TOKEN_IF TOKEN_LEFT_PAREN expr TOKEN_RIGHT_PAREN stmt
-	| TOKEN_IF TOKEN_LEFT_PAREN expr TOKEN_RIGHT_PAREN stmt2 TOKEN_ELSE stmt
-	| TOKEN_FOR TOKEN_LEFT_PAREN opt_expr TOKEN_SEMICOLON opt_expr TOKEN_SEMICOLON opt_expr TOKEN_RIGHT_PAREN stmt
-	| stmt3
+stmt	: TOKEN_IF expr block
+	| TOKEN_IF expr block TOKEN_ELIF block
+	| TOKEN_IF expr block TOKEN_ELSE block
+	| TOKEN_IF expr block TOKEN_ELIF block TOKEN_ELSE block
+	| TOKEN_FOR TOKEN_LEFT_PAREN opt_expr TOKEN_SEMICOLON opt_expr TOKEN_SEMICOLON opt_expr TOKEN_RIGHT_PAREN block
+	| TOKEN_WHILE TOKEN_LEFT_PAREN expr TOKEN_RIGHT_PAREN block
+	| TOKEN_BREAK TOKEN_NEWLINE
+	| TOKEN_CONTINUE TOKEN_NEWLINE
+	| stmt2
 	;
 
-stmt2	: TOKEN_IF TOKEN_LEFT_PAREN expr TOKEN_RIGHT_PAREN stmt2 TOKEN_ELSE stmt2
-	| TOKEN_FOR TOKEN_LEFT_PAREN opt_expr TOKEN_SEMICOLON opt_expr TOKEN_SEMICOLON opt_expr TOKEN_RIGHT_PAREN stmt2
-	| stmt3
+stmt2	: decl
+	| assignment
+	| expr TOKEN_NEWLINE
+	| TOKEN_PRINT expr_list TOKEN_NEWLINE
+	| TOKEN_RETURN expr TOKEN_NEWLINE
+	| TOKEN_RETURN TOKEN_NEWLINE
 	;
 
-stmt3	: decl
-	| TOKEN_LEFT_CURLY stmt_list TOKEN_RIGHT_CURLY
-	| expr TOKEN_SEMICOLON
-	| TOKEN_PRINT expr_list TOKEN_SEMICOLON
-	| TOKEN_RETURN expr TOKEN_SEMICOLON
-	| TOKEN_RETURN TOKEN_SEMICOLON
-	;
-
-assignee	: assignee TOKEN_LEFT_BRACKET expr TOKEN_RIGHT_BRACKET
-		| ident
+block 	: opt_newline TOKEN_LEFT_CURLY opt_newline stmt_list TOKEN_RIGHT_CURLY opt_newline
 		;
 
-expr	: assignee TOKEN_ASSIGN expr
-	| assignee TOKEN_PLUS_EQUAL expr
-	| assignee TOKEN_MINUS_EQUAL expr
+opt_newline 	: TOKEN_NEWLINE
+				|
+				;
+
+decl	: decl_basic TOKEN_NEWLINE
+	| decl_basic TOKEN_ASSIGN expr TOKEN_NEWLINE
+	| decl_basic TOKEN_ASSIGN block
+	;
+
+decl_basic	: ident TOKEN_COLON type
+	;
+
+assignment 	: assignee TOKEN_ASSIGN expr TOKEN_NEWLINE
+	| assignee TOKEN_PLUS_EQUAL expr TOKEN_NEWLINE
+	| assignee TOKEN_MINUS_EQUAL expr TOKEN_NEWLINE
+
+assignee	: ident
+		;
+
+expr	: expr TOKEN_OR expr2
+	| expr TOKEN_BITWISE_OR expr2
 	| expr2
 	;
 
-expr2	: expr2 TOKEN_OR expr3
+expr2	: expr2 TOKEN_AND expr3
+	| expr2 TOKEN_BITWISE_AND expr3
 	| expr3
 	;
 
-expr3	: expr3 TOKEN_AND expr4
+expr3 	: expr3 TOKEN_XOR expr4
 	| expr4
 	;
 
@@ -169,19 +174,18 @@ expr6	: expr6 TOKEN_MULT expr7
 	| expr7
 	;
 
-expr7	: expr7 TOKEN_XOR expr8
+expr7	: expr7 TOKEN_SHIFT_LEFT expr8
+	| expr7 TOKEN_SHIFT_RIGHT expr8
 	| expr8
 	;
 
 expr8	: TOKEN_MINUS expr9
 	| TOKEN_NOT expr9
+	| TOKEN_BITWISE_NOT expr9
 	| expr9
 	;
 
-expr9	: expr10
-	;
-
-expr10	: literal
+expr9	: literal
 	| TOKEN_LEFT_PAREN expr TOKEN_RIGHT_PAREN
 	| assignee TOKEN_LEFT_PAREN expr_list TOKEN_RIGHT_PAREN
 	| assignee
@@ -189,6 +193,7 @@ expr10	: literal
 
 literal	: TOKEN_TRUE
 	| TOKEN_FALSE
+	| TOKEN_NULL
 	| TOKEN_INTEGER_LITERAL
 	| TOKEN_STRING_LITERAL
 	| TOKEN_CHAR_LITERAL
@@ -205,18 +210,20 @@ expr_list2	: TOKEN_COMMA expr expr_list2
 type	: TOKEN_INTEGER
 	| TOKEN_BOOLEAN
 	| TOKEN_STRING
+	| TOKEN_NULLABLE_STRING
 	| TOKEN_CHAR
 	| TOKEN_VOID
+	| function_type
 	;
 
 function_type	: TOKEN_FUNCTION type TOKEN_LEFT_PAREN param_list TOKEN_RIGHT_PAREN
 		;
 
-param_list	: decl2 param_list2
+param_list	: decl_basic param_list2
 		|
 		;
 
-param_list2	: TOKEN_COMMA decl2 param_list2
+param_list2	: TOKEN_COMMA decl_basic param_list2
 		|
 		;
 
