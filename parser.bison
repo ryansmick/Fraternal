@@ -95,7 +95,7 @@ struct decl* parser_result;
 program : stmt_list TOKEN_EOF
 	;
 
-stmt_list	: stmt stmt_list
+stmt_list	: stmt TOKEN_NEWLINE stmt_list
 		|
 		;
 
@@ -105,37 +105,35 @@ stmt	: TOKEN_IF expr block
 	| TOKEN_IF expr block TOKEN_ELIF block TOKEN_ELSE block
 	| TOKEN_FOR TOKEN_LEFT_PAREN opt_expr TOKEN_SEMICOLON opt_expr TOKEN_SEMICOLON opt_expr TOKEN_RIGHT_PAREN block
 	| TOKEN_WHILE TOKEN_LEFT_PAREN expr TOKEN_RIGHT_PAREN block
-	| TOKEN_BREAK TOKEN_NEWLINE
-	| TOKEN_CONTINUE TOKEN_NEWLINE
+	| TOKEN_BREAK
+	| TOKEN_CONTINUE
 	| stmt2
 	;
 
 stmt2	: decl
 	| assignment
-	| expr TOKEN_NEWLINE
-	| TOKEN_PRINT expr_list TOKEN_NEWLINE
-	| TOKEN_RETURN expr TOKEN_NEWLINE
-	| TOKEN_RETURN TOKEN_NEWLINE
+	| expr
+	| TOKEN_PRINT expr_list
+	| TOKEN_RETURN expr
+	| TOKEN_RETURN
 	;
 
-block 	: opt_newline TOKEN_LEFT_CURLY opt_newline stmt_list TOKEN_RIGHT_CURLY opt_newline
+block 	: TOKEN_LEFT_CURLY TOKEN_NEWLINE stmt_list TOKEN_RIGHT_CURLY
+		| TOKEN_NEWLINE TOKEN_LEFT_CURLY stmt_list TOKEN_RIGHT_CURLY
+		| TOKEN_LEFT_CURLY stmt TOKEN_RIGHT_CURLY
 		;
 
-opt_newline 	: TOKEN_NEWLINE
-				|
-				;
-
-decl	: decl_basic TOKEN_NEWLINE
-	| decl_basic TOKEN_ASSIGN expr TOKEN_NEWLINE
+decl	: decl_basic
+	| decl_basic TOKEN_ASSIGN expr
 	| decl_basic TOKEN_ASSIGN block
 	;
 
 decl_basic	: ident TOKEN_COLON type
 	;
 
-assignment 	: assignee TOKEN_ASSIGN expr TOKEN_NEWLINE
-	| assignee TOKEN_PLUS_EQUAL expr TOKEN_NEWLINE
-	| assignee TOKEN_MINUS_EQUAL expr TOKEN_NEWLINE
+assignment 	: assignee TOKEN_ASSIGN expr
+	| assignee TOKEN_PLUS_EQUAL expr
+	| assignee TOKEN_MINUS_EQUAL expr
 
 assignee	: ident
 		;
