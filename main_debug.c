@@ -118,6 +118,9 @@ int main(int argc, char* argv[]) {
 				case TOKEN_RIGHT_CURLY:
 					printf("TOKEN_RIGHT_CURLY\n");
 					break;
+				case TOKEN_ARROW:
+					printf("TOKEN_ARROW\n");
+					break;
 				case TOKEN_PLUS:
 					printf("TOKEN_PLUS\n");
 					break;

@@ -1,7 +1,7 @@
 my_int = 1 + 2
 new_boolean = true && false
 
-f: func int (x: int, y: int) {
+f: func (x: int, y: int) -> int = {
 	print "this is the function body"
 
 	     	

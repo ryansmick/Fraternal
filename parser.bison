@@ -32,6 +32,7 @@ for use by scanner.c.
 %token TOKEN_RIGHT_PAREN
 %token TOKEN_LEFT_CURLY
 %token TOKEN_RIGHT_CURLY
+%token TOKEN_ARROW
 %token TOKEN_PLUS
 %token TOKEN_MINUS
 %token TOKEN_NOT
@@ -214,7 +215,7 @@ type	: TOKEN_INTEGER
 	| function_type
 	;
 
-function_type	: TOKEN_FUNCTION type TOKEN_LEFT_PAREN param_list TOKEN_RIGHT_PAREN
+function_type	: TOKEN_FUNCTION TOKEN_LEFT_PAREN param_list TOKEN_RIGHT_PAREN TOKEN_ARROW type
 		;
 
 param_list	: decl_basic param_list2

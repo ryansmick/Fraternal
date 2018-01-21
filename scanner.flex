@@ -50,6 +50,7 @@ null {return TOKEN_NULL;}
 [}] {return TOKEN_RIGHT_CURLY;}
 \+= {return TOKEN_PLUS_EQUAL;}
 \+ {return TOKEN_PLUS;}
+-> {return TOKEN_ARROW;}
 -= {return TOKEN_MINUS_EQUAL;}
 - {return TOKEN_MINUS;}
 != {return TOKEN_NE;}
